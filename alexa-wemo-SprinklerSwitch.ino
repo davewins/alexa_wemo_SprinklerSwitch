@@ -11,8 +11,8 @@ void startHttpServer();
 void turnOnRelay();
 void turnOffRelay();
 
-const char* ssid = "SSID";
-const char* password = "PASSWORD";
+const char* ssid = "YOURSSID";
+const char* password = "YOURPASSWORD";
 
 unsigned int localPort = 1900;      // local port to listen on
 
@@ -125,7 +125,14 @@ void loop() {
     }
   } else { 
         // Re-Initialise wifi connection
-      wifiConnected = connectWifi();   
+      wifiConnected = connectWifi();  
+      if(wifiConnected){
+        udpConnected = connectUDP(); 
+        if (udpConnected){
+             // initialise pins if needed 
+              startHttpServer();
+        } 
+      } 
   }
 }
 
@@ -320,6 +327,10 @@ boolean connectWifi(){
   }
   
   if (state){
+    IPAddress ip(192,168,1,23);   
+    IPAddress gateway(192,168,1,2);   
+    IPAddress subnet(255,255,255,0);   
+    WiFi.config(ip, gateway, subnet);
     Serial.println("");
     Serial.print("Connected to ");
     Serial.println(ssid);
